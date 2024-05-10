@@ -11,6 +11,9 @@ import io.github._4drian3d.authmevelocity.lastserver.LastServerAddon;
 import io.github._4drian3d.authmevelocity.lastserver.database.Database;
 import io.github._4drian3d.authmevelocity.lastserver.database.OnlineServerCache;
 
+import java.net.InetSocketAddress;
+import java.util.Locale;
+
 public final class PreSendOnLoginListener implements LastLoginListener<PreSendOnLoginEvent> {
     @Inject
     private EventManager eventManager;
@@ -27,8 +30,13 @@ public final class PreSendOnLoginListener implements LastLoginListener<PreSendOn
     public EventTask executeAsync(final PreSendOnLoginEvent event) {
         return EventTask.withContinuation(continuation -> {
             final Player player = event.player();
-            final String newServer = this.database.lastServerOf(player.getUsername());
-
+            String newServer = this.database.lastServerOf(player.getUsername());
+            String vhost = event.player().getVirtualHost().map(InetSocketAddress::getHostString).orElse("").toLowerCase(Locale.ROOT);
+            for (String s : plugin.config().get().getForcedServers()){
+                if (vhost.contains(s)){
+                    newServer = s;
+                }
+            }
             final boolean requirePermission = plugin.config().get().getRequirePermission();
             if (newServer != null && (!requirePermission || player.hasPermission("lastserver.use"))) {
                 this.proxyServer.getServer(newServer)

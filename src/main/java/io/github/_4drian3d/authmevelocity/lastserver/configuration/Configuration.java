@@ -13,6 +13,8 @@ public final class Configuration {
 
     @Comment("A list of servers to not save as a player's last server")
     private List<String> excludedServers = List.of("login", "spawn");
+    @Comment("A list of servers to not save as a player's last server")
+    private List<String> forcedServers = List.of("login", "spawn");
 
     public boolean getRequirePermission() {
         return this.requirePermission;
@@ -20,5 +22,8 @@ public final class Configuration {
 
     public List<String> getExcludedServers() {
         return this.excludedServers;
+    }
+    public List<String> getForcedServers() {
+        return this.forcedServers;
     }
 }
